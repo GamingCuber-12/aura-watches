@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA | Haute Horlogerie Ecosystem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;700&family=Playfair+Display:ital,wght=0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* --- RESET & PALETTE OVERHAUL (HIGH CONTRAST / POP OUT) --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Playfair Display', serif;
+            cursor: none !important;
+        }
+
+        html, body {
+            background-color: #000000;
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body {
+            opacity: 0;
+            animation: bodyFadeIn 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes bodyFadeIn {
+            to { opacity: 1; }
+        }
+
+        /* --- ADVANCED SHARP CUSTOM CURSOR --- */
+        .custom-cursor-dot, .custom-cursor-ring {
+            position: fixed;
+            top: 0; left: 0;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+                        height 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+                        background-color 0.25s, border-color 0.25s;
+            will-change: transform;
+        }
+        .custom-cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #d4af37; /* Brighter vivid luxury gold */
+            box-shadow: 0 0 15px #d4af37, 0 0 30px #d4af37;
+        }
+        .custom-cursor-ring {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(212, 175, 55, 0.6);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+        
+        body.cursor-hovering .custom-cursor-dot {
+            width: 14px;
+            height: 14px;
+            background-color: #ffffff;
+            box-shadow: 0 0 25px #ffffff;
+        }
+        body.cursor-hovering .custom-cursor-ring {
+            width: 65px;
+            height: 65px;
+            border-color: #ffffff;
+            background-color: rgba(212, 175, 55, 0.15);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        /* --- ENHANCED DYNAMIC GLOW CANVAS BG --- */
+        .bg-luxury-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle at 50% 50%, #161512 0%, #000000 100%);
+            z-index: -3;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            filter: blur(140px); /* Slightly sharper blur to create distinct popping elements */
+            opacity: 0.35;
+            animation: floatAround 20s infinite ease-in-out alternate;
+            pointer-events: none;
+        }
+        .orb-1 { width: 750px; height: 750px; top: -100px; left: -100px; background: radial-gradient(circle, #d4af37 0%, transparent 80%); }
+        .orb-2 { width: 850px; height: 850px; bottom: -150px; right: -150px; background: radial-gradient(circle, #4a2880 0%, transparent 80%); animation-duration: 25s; }
+        .orb-3 { width: 550px; height: 550px; top: 35%; left: 30%; background: radial-gradient(circle, #b59410 0%, transparent 75%); animation-duration: 18s; }
+
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(120px, -80px) scale(1.2); }
+            100% { transform: translate(-60px, 90px) scale(0.9) rotate(180deg); }
+        }
+
+        .bg-dot-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: radial-gradient(rgba(212, 175, 55, 0.18) 1.5px, transparent 1.5px);
+            background-size: 60px 60px;
+            z-index: -2;
+        }
+
+        /* --- DECORATIVE EXTRA GEOMETRICS (MAKES THINGS POP) --- */
+        .decor-line-v {
+            position: fixed;
+            top: 0; bottom: 0; width: 1px;
+            background: linear-gradient(to bottom, transparent, rgba(212, 175, 55, 0.08), transparent);
+            z-index: -1;
+            pointer-events: none;
+        }
+        .line-v-1 { left: 8%; }
+        .line-v-2 { right: 8%; }
+
+        .corner-bracket {
+            position: absolute; width: 20px; height: 20px;
+            border-color: rgba(212, 175, 55, 0.4); border-style: solid;
+            pointer-events: none; transition: all 0.4s ease;
+        }
+
+        /* --- STATS COUNTER BAR (NEW ADDITION) --- */
+        .stats-ticker-bar {
+            background: rgba(0, 0, 0, 0.85);
+            border-top: 1px solid rgba(212, 175, 55, 0.3);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 40px 8%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+        .stat-item h5 { font-family: 'Montserrat', sans-serif; font-size: 2.5rem; font-weight: 700; color: #ffffff; margin-bottom: 5px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        .stat-item p { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; letter-spacing: 0.2rem; text-transform: uppercase; color: #d4af37; }
+
+        /* --- NOTIFICATION DISCLAIMER BANNER --- */
+        .disclaimer-banner {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #d4af37;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            color: #ffffff;
+            padding: 16px 36px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.12rem;
+            position: fixed;
+            bottom: -120px; left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            border-radius: 50px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9), 0 0 40px rgba(212, 175, 55, 0.3);
+            display: flex; align-items: center; gap: 20px;
+            animation: slideUpNotice 1.2s 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes slideUpNotice { to { bottom: 30px; } }
+        .disclaimer-banner button {
+            background: #d4af37; color: #000000; border: none;
+            padding: 8px 20px; border-radius: 20px; font-size: 0.7rem;
+            font-weight: 700; text-transform: uppercase;
+        }
+
+        /* --- TEXT MARQUEE --- */
+        .marquee-container {
+            background: #000000;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 25px 0; overflow: hidden; display: flex; white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block; font-family: 'Montserrat', sans-serif; font-size: 0.85rem;
+            font-weight: 400; letter-spacing: 0.6rem; text-transform: uppercase;
+            color: #ffffff; text-shadow: 0 0 12px rgba(212,175,55,0.4);
+            animation: marquee 28s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translate3d(-50%, 0, 0); }
+            100% { transform: translate3d(0%, 0, 0); }
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed; top: 0; left: 0; width: 100%; padding: 25px 8%;
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+            transform: translateY(-120px);
+            animation: navSlideDown 1.2s 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes navSlideDown { to { transform: translateY(0); } }
+        
+        .logo { 
+            font-size: 1.8rem; letter-spacing: 0.7rem; font-weight: 700; text-decoration: none; color: #ffffff; text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+
+        .nav-links a {
+            text-decoration: none; color: #cccccc; margin-left: 40px; font-size: 0.75rem;
+            letter-spacing: 0.2rem; text-transform: uppercase; font-family: 'Montserrat', sans-serif;
+            position: relative; padding: 5px 0; transition: color 0.3s;
+        }
+        .nav-links a:hover { color: #d4af37; text-shadow: 0 0 15px rgba(212,175,55,0.6); }
+
+        #smooth-scroll-wrapper { position: fixed; top: 0; left: 0; width: 100%; height: auto; will-change: transform; }
+
+        /* --- SECTIONS (CLEAR & HIGH CONTRAST) --- */
+        section { padding: 160px 8% 120px 8%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        
+        .section-light { background: #ffffff; color: #000000; }
+        .section-light p { color: #222222; font-weight: 400; }
+        .section-light h1, .section-light h2 { color: #000000; }
+
+        .section-dark { background: #050505; color: #ffffff; border-top: 1px solid rgba(212,175,55,0.15); border-bottom: 1px solid rgba(212,175,55,0.15); }
+        .section-dark p { color: #dddddd; }
+
+        .section-badge {
+            font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.3rem;
+            color: #d4af37; text-transform: uppercase; margin-bottom: 25px; display: inline-flex; align-items: center; gap: 12px;
+        }
+        .section-badge::before { content: ''; width: 30px; height: 2px; background: #d4af37; display: inline-block; }
+
+        /* --- VISUAL ELEMENTS POPPING (SHADOWS & CRISP OUTLINES) --- */
+        .glass-card {
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            border: 2px solid #d4af37;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9), 0 0 50px rgba(212, 175, 55, 0.25);
+            border-radius: 40px; padding: 70px; color: #ffffff;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 50px 100px rgba(0, 0, 0, 0.95), 0 0 70px rgba(212, 175, 55, 0.4);
+        }
+
+        .reveal-element {
+            opacity: 0; transform: translateY(60px); filter: blur(10px);
+            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), filter 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-element.active { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+        h1, h2, h3, h4 { font-weight: 400; letter-spacing: 0.06rem; }
+        p { font-family: 'Montserrat', sans-serif; font-weight: 300; font-size: 1rem; line-height: 1.9; }
+        
+        /* --- LUXURY BUTTON SYSTEMS --- */
+        .btn-luxury {
+            display: inline-block; padding: 20px 48px; border: 2px solid #000000;
+            text-decoration: none; color: #000000; font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem; font-weight: 700; letter-spacing: 0.22rem; text-transform: uppercase;
+            background: transparent; border-radius: 50px; position: relative; overflow: hidden; z-index: 1;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-luxury::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 0; height: 100%;
+            background: #000000; z-index: -1; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-luxury:hover { color: #ffffff; transform: scale(1.05); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .btn-luxury:hover::before { width: 100%; }
+
+        .section-dark .btn-luxury { border-color: #ffffff; color: #ffffff; }
+        .section-dark .btn-luxury::before { background: #ffffff; }
+        .section-dark .btn-luxury:hover { color: #000000; box-shadow: 0 20px 40px rgba(255,255,255,0.2); }
+
+        .btn-glow { border-color: #d4af37 !important; color: #d4af37 !important; }
+        .btn-glow::before { background: #d4af37 !important; }
+        .btn-glow:hover { color: #000000 !important; box-shadow: 0 0 45px rgba(212, 175, 55, 0.8) !important; }
+
+        /* --- HERO SECTOR --- */
+        .hero-banner { display: flex; flex-direction: row; align-items: center; gap: 8%; }
+        .hero-info { flex: 1; }
+        .hero-info h1 { font-size: 5rem; line-height: 1.1; margin-bottom: 30px; font-weight: 600; }
+        .hero-btn-container { display: flex; gap: 20px; margin-top: 40px; }
+        
+        .hero-media { 
+            flex: 1.2; height: 75vh; background: #151518 center/cover no-repeat; border-radius: 40px;
+            box-shadow: 0 60px 100px rgba(0,0,0,0.5), 0 0 60px rgba(212, 175, 55, 0.2);
+            border: 2px solid rgba(212, 175, 55, 0.3); position: relative; overflow: hidden;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hero-media:hover { transform: scale(1.03); }
+        .hero-media::after {
+            content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent);
+            transform: skewX(-25deg); animation: shine 4.5s infinite ease-in-out;
+        }
+
+        /* --- BENEFITS SECTOR --- */
+        .advantages-wrapper { text-align: center; margin-bottom: 70px;}
+        .advantages-wrapper h2 { font-size: 4rem; font-weight: 600; text-transform: uppercase; line-height: 1.1; color: #ffffff; text-shadow: 0 5px 30px rgba(0,0,0,0.8); }
+        
+        .advantages-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .adv-card { border-radius: 35px; padding: 60px 40px; min-height: 440px; display: flex; flex-direction: column; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; }
+        .adv-card .card-label { font-family: 'Montserrat', sans-serif; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.2rem; text-transform: uppercase; margin-bottom: 35px; }
+        .adv-card h3 { font-family: 'Montserrat', sans-serif; font-weight: 500; font-size: 1.7rem; line-height: 1.3; margin-bottom: 25px; }
+        
+        .card-white { background: #ffffff; color: #000000; border: 2px solid #ffffff; box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
+        .card-white .card-label { color: #b59410; }
+        .card-white p { color: #111111; font-weight: 400; }
+        .card-white:hover { transform: translateY(-15px); box-shadow: 0 45px 90px rgba(212,175,55,0.3); border-color: #d4af37; }
+
+        .card-black { background: #000000; color: #ffffff; border: 2px solid rgba(212, 175, 55, 0.3); }
+        .card-black .card-label { color: #00ccff; text-shadow: 0 0 15px rgba(0,204,255,0.4); }
+        .card-black p { color: #eeeeee; }
+        .card-black:hover { transform: translateY(-15px); border-color: #00ccff; box-shadow: 0 45px 90px rgba(0,204,255,0.3); }
+
+        .card-lime { background: #000000; color: #ffffff; border: 2px solid #d4af37; }
+        .card-lime .card-label { color: #d4af37; text-shadow: 0 0 15px rgba(212,175,55,0.5); }
+        .card-lime p { color: #eeeeee; }
+        .card-lime:hover { transform: translateY(-15px); box-shadow: 0 45px 90px rgba(212,175,55,0.5); }
+
+        /* --- CONFIGURATIONS PORTFOLIO --- */
+        .options-header { margin-bottom: 80px; text-align: center; }
+        .options-header h2 { font-size: 3.5rem; font-weight: 600; color: #000000; }
+        .options-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 35px; }
+        
+        .option-item { 
+            text-decoration: none; color: inherit; background: #ffffff; border-radius: 35px; padding: 26px; 
+            border: 2px solid #eeeeee; transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05); position: relative;
+        }
+        .option-item:hover { 
+            transform: translateY(-15px) scale(1.02); 
+            box-shadow: 0 45px 90px rgba(0,0,0,0.15), 0 0 40px rgba(212, 175, 55, 0.3);
+            border-color: #d4af37;
+        }
+        .option-img { 
+            height: 32vh; background: #0a0a0c center/cover no-repeat; margin-bottom: 25px; 
+            border-radius: 24px; border: 1px solid rgba(0,0,0,0.05);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .option-item:hover .option-img { transform: scale(1.04); }
+        .option-item h4 { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2rem; margin-bottom: 10px; color: #000000; }
+        .option-item span { font-family: 'Montserrat', sans-serif; font-size: 1.1rem; color: #b59410; font-weight: 600; }
+
+        /* --- SPLIT SHOWCASES --- */
+        .split-showcase { display: flex; flex-direction: row; gap: 8%; align-items: center; }
+        .split-showcase.reverse { flex-direction: row-reverse; }
+        .split-img { 
+            flex: 1; height: 65vh; background: #0a0a0c center/cover no-repeat;
+            border-radius: 40px; box-shadow: 0 50px 90px rgba(0,0,0,0.8);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            position: relative; overflow: hidden; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .split-img:hover { transform: scale(1.02); }
+        .split-text { flex: 1; }
+        .split-text h2 { font-size: 3.5rem; font-weight: 600; margin-bottom: 30px; text-shadow: 0 2px 20px rgba(0,0,0,0.4); }
+        .split-btn-group { display: flex; gap: 20px; margin-top: 45px; }
+
+        /* --- SPECIFICATION MODAL SHEET --- */
+        .product-modal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85); z-index: 2000; display: none;
+            align-items: center; justify-content: center; padding: 40px;
+            backdrop-filter: blur(35px); -webkit-backdrop-filter: blur(35px);
+            opacity: 0; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .product-modal.modal-active { opacity: 1; }
+        .modal-body {
+            width: 100%; max-width: 1000px; display: flex; gap: 60px; align-items: center;
+            background: #000000; border: 2px solid #d4af37;
+            box-shadow: 0 60px 120px rgba(0, 0, 0, 0.95), 0 0 80px rgba(212, 175, 55, 0.4);
+            border-radius: 44px; padding: 60px; color: #ffffff;
+            transform: translateY(50px) scale(0.95); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .product-modal.modal-active .modal-body { transform: translateY(0) scale(1); }
+        .modal-gallery { 
+            flex: 1.1; height: 50vh; background-color: #0c0c0e; border-radius: 28px; 
+            border: 1px solid rgba(212,175,55,0.2); background-size: cover; background-position: center;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+        }
+        .modal-details { flex: 1; }
+        .modal-details h2 { font-size: 3rem; font-weight: 600; margin-bottom: 15px; color: #fff; }
+        .modal-price { font-family: 'Montserrat', sans-serif; color: #d4af37; display: block; margin-bottom: 25px; font-size: 1.8rem; font-weight: 600; text-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+        .modal-details p { margin-bottom: 45px; color: #e5e5e5; font-size: 0.95rem; }
+        .modal-action-btn-group { display: flex; gap: 20px; }
+        .close-modal-btn {
+            background: transparent; border: 2px solid rgba(255,255,255,0.3); padding: 18px 38px;
+            font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.15rem; text-transform: uppercase;
+            border-radius: 50px; color: #fff; transition: all 0.3s;
+        }
+        .close-modal-btn:hover { border-color: #fff; background: rgba(255,255,255,0.1); }
+
+        /* --- FOOTER CANOPY --- */
+        footer {
+            background: #000000; border-top: 2px solid #d4af37; padding: 130px 8% 60px 8%;
+            display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 60px;
+            border-radius: 60px 60px 0 0; color: #ffffff; position: relative; z-index: 10;
+            box-shadow: 0 -30px 60px rgba(0,0,0,0.9);
+        }
+        .footer-brand h3 { font-size: 2.2rem; letter-spacing: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 25px; color: #ffffff; }
+        .footer-brand p { font-size: 0.9rem; color: #cccccc; max-width: 320px; }
+        .footer-column h4 { font-family: 'Montserrat', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.2rem; text-transform: uppercase; margin-bottom: 30px; color: #d4af37; }
+        .footer-column ul { list-style: none; }
+        .footer-column ul li { margin-bottom: 18px; }
+        .footer-column ul li a { text-decoration: none; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; color: #bbbbbb; transition: all 0.3s; }
+        .footer-column ul li a:hover { color: #d4af37; text-shadow: 0 0 15px rgba(212, 175, 55, 0.6); padding-left: 6px; }
+        .footer-bottom {
+            grid-column: 1 / -1; border-top: 1px solid rgba(212,175,55,0.2); padding-top: 40px; margin-top: 50px;
+            display: flex; justify-content: space-between; font-family: 'Montserrat', sans-serif; font-size: 0.85rem; color: #888888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="custom-cursor-dot" id="cursor-dot"></div>
+    <div class="custom-cursor-ring" id="cursor-ring"></div>
+
+    <div class="disclaimer-banner" id="global-disclaimer">
+        <span><strong>Disclaimer Notice:</strong> This website is a simulation and not a real commercial storefront.</span>
+        <button onclick="document.getElementById('global-disclaimer').style.display='none'">Acknowledge</button>
+    </div>
+
+    <div class="bg-luxury-canvas">
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+        <div class="bg-orb orb-3"></div>
+    </div>
+    <div class="bg-dot-grid"></div>
+
+    <div class="decor-line-v line-v-1"></div>
+    <div class="decor-line-v line-v-2"></div>
+
+    <nav>
+        <a href="#" class="logo" onclick="scrollToSection(event, '#hero')">AURA</a>
+        <div class="nav-links">
+            <a href="#" onclick="scrollToSection(event, '#advantages')">Benefits</a>
+            <a href="#" onclick="scrollToSection(event, '#options')">Curations</a>
+            <a href="#" onclick="scrollToSection(event, '#engineering')">Engineering</a>
+            <a href="#" onclick="scrollToSection(event, '#manifesto')">Manifesto</a>
+        </div>
+    </nav>
+
+    <div id="smooth-scroll-wrapper">
+
+        <section id="hero" class="section-light hero-banner">
+            <div class="hero-info">
+                <div class="section-badge">Atelier Overview</div>
+                <h1>The New Standard of Horology.</h1>
+                <p>Designed for global citizens who demand precision execution. AURA pairs calibrated Swiss architectural components with advanced micro-grain surface engineering.</p>
+                <div class="hero-btn-container">
+                    <button class="btn-luxury" onclick="scrollToSection(event, '#options')">Explore Inventory</button>
+                    <button class="btn-luxury btn-glow" onclick="alert('Virtual reality showroom configuration engine initializing...')">Launch AR Fitting Room</button>
+                </div>
+            </div>
+            <div class="hero-media" style="background-image: url('img1.jpg');">
+                <div class="corner-bracket" style="top: 20px; left: 20px; border-top-width: 2px; border-left-width: 2px;"></div>
+                <div class="corner-bracket" style="top: 20px; right: 20px; border-top-width: 2px; border-right-width: 2px;"></div>
+                <div class="corner-bracket" style="bottom: 20px; left: 20px; border-bottom-width: 2px; border-left-width: 2px;"></div>
+                <div class="corner-bracket" style="bottom: 20px; right: 20px; border-bottom-width: 2px; border-right-width: 2px;"></div>
+            </div>
+        </section>
+
+        <div class="stats-ticker-bar">
+            <div class="stat-item">
+                <h5>72H</h5>
+                <p>Power Reserve</p>
+            </div>
+            <div class="stat-item">
+                <h5>904L</h5>
+                <p>Monobloc Steel</p>
+            </div>
+            <div class="stat-item">
+                <h5>COSC</h5>
+                <p>Certified Spec</p>
+            </div>
+            <div class="stat-item">
+                <h5>200M</h5>
+                <p>Hermetic Depth</p>
+            </div>
+        </div>
+
+        <div class="marquee-container">
+            <div class="marquee-content">
+                &nbsp;&nbsp;AURA SWISS CALIBRATIONS • ABSOLUTE HERITAGE • MONOBLOC CALIBER SYSTEM • AEROSPACE INSPIRED • PRECISION CHRONOMETER • 
+                AURA SWISS CALIBRATIONS • ABSOLUTE HERITAGE • MONOBLOC CALIBER SYSTEM • AEROSPACE INSPIRED • PRECISION CHRONOMETER •
+            </div>
+        </div>
+
+        <section id="advantages" class="section-dark">
+            <div class="advantages-wrapper reveal-element">
+                <div class="section-badge">Horological Calibrations</div>
+                <h2>Benefits of Our Watches</h2>
+            </div>
+
+            <div class="advantages-grid reveal-element">
+                <div class="adv-card card-white">
+                    <span class="card-label">Absolute Heritage</span>
+                    <h3>Surgical-Grade Monobloc Shell</h3>
+                    <p>Each timepiece is machined from solid 904L aerospace steel blocks. Extreme mechanical resilience with a warm reflective finish.</p>
+                </div>
+                <div class="adv-card card-black">
+                    <span class="card-label">Kinetic Autonomy</span>
+                    <h3>Perpetual Self-Winding Weight</h3>
+                    <p>Internal bidirectional gold rotors turn your standard daily physical wrist movements into a consistent 72-hour power reserve.</p>
+                </div>
+                <div class="adv-card card-lime">
+                    <span class="card-label">Optical Clarity</span>
+                    <h3>Double Anti-Glare Sapphire</h3>
+                    <p>Arched crystal shields treated with deep oxide coatings reflect harsh ambient light away. Absolute dial clarity from any view angle.</p>
+                </div>
+                <div class="adv-card card-white">
+                    <span class="card-label">Climate Armor</span>
+                    <h3>Hermetic Multi-Gasket Gills</h3>
+                    <p>Protected by compression rings and screw-locked crowns, safely isolating intricate mechanical gears up to 200 meters depth.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="options" class="section-light">
+            <div class="options-header reveal-element">
+                <div class="section-badge" style="display: table; margin: 0 auto 20px auto;">Architectural Series</div>
+                <h2>The Curated Portfolio</h2>
+                <p>Ten signature variations. Choose any layout option to view its structural specification panel immediately.</p>
+            </div>
+            <div class="options-grid reveal-element" id="dynamic-options-container">
+                </div>
+        </section>
+
+        <section id="engineering" class="section-dark split-showcase">
+            <div class="split-img reveal-element" style="background-image: url('img11.jpg');"></div>
+            <div class="split-text reveal-element">
+                <div class="section-badge">Chassis Execution</div>
+                <h2>Bespoke Machining</h2>
+                <p>Each chassis undergoes advanced diamond-like carbon coating processing. This alignment ensures extreme architectural integrity while preserving the warm metallic reflections characteristic of light luxury design language.</p>
+                <div class="split-btn-group">
+                    <button class="btn-luxury" onclick="alert('Downloading high-resolution SVG blueprint schematic engineering vector packages...')">Download Engineering Schematics</button>
+                    <button class="btn-luxury btn-glow" onclick="alert('Connecting live streaming link to the Geneva Atelier...')">Tour the Geneva Atelier</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-light split-showcase reverse">
+            <div class="split-img reveal-element" style="background-image: url('img12.jpg');"></div>
+            <div class="split-text reveal-element">
+                <div class="section-badge">Anatomical Contour</div>
+                <h2>Ergonomic Fluidity</h2>
+                <p>Every link layout is systematically tapered to curve organically down the carpal contours of the wrist, shifting mass parameters cleanly to optimize comfort during high-focus operations.</p>
+                <div class="split-btn-group">
+                    <button class="btn-luxury btn-glow" onclick="alert('Loading structural weight calculation metrics... Balance vector alignment confirmed at 0.04g accuracy.')">Weight Distribution Index</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="manifesto" style="padding: 120px 8%;">
+            <div class="glass-card reveal-element" style="text-align: center; max-width: 880px; margin: 0 auto;">
+                <div class="section-badge" style="display: table; margin: 0 auto 25px auto;">Studio Vision</div>
+                <h2 style="font-size: 2.8rem; font-style: italic; font-weight: 400; line-height: 1.6; margin-bottom: 30px;">"Form follows emotion, but execution remains strictly absolute."</h2>
+                <p style="color: #eeeeee; font-family: 'Montserrat', sans-serif; font-size: 1rem; max-width: 650px; margin: 0 auto; font-weight: 400;">AURA is structured upon the foundational law that luxury is defined by the components you do not see just as much as the layout details you do.</p>
+                <br><br>
+                <button class="btn-luxury" style="border-color:#ffffff; color:#ffffff;" onclick="alert('AURA Historical Manifesto Document Log compiled and sent to cache.')">Read Our Full History</button>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-brand">
+                <h3>AURA</h3>
+                <p>Bespoke horological calibration systems engineered in collaboration with progressive architectural design platforms.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Navigation</h4>
+                <ul>
+                    <li><a href="#" onclick="scrollToSection(event, '#hero')">Top Overview</a></li>
+                    <li><a href="#" onclick="scrollToSection(event, '#advantages')">Watch Benefits Matrix</a></li>
+                    <li><a href="#" onclick="scrollToSection(event, '#options')">Portfolio Collections</a></li>
+                    <li><a href="#" onclick="scrollToSection(event, '#manifesto')">Our Studio Atelier</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Interactive Inquiries</h4>
+                <ul>
+                    <li><a href="#" onclick="event.preventDefault(); alert('Opening Digital Concierge Portal.');">Private Consultation</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); alert('Global Boutique cell coordinates updated.');">Boutique Locations</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); alert('Custom design workstation module connected.');">Bespoke Ordering</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); alert('VIP Waitlist application logged.');">Priority Waitlist Access</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Certificates MATRIX</h4>
+                <ul>
+                    <li><a href="#" onclick="event.preventDefault(); alert('COSC Validation logs certified.');">Chronometer Certifications</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); alert('End-to-end user privacy active.');">Privacy Protection</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); alert('Standard terms verified.');">Terms of Assignment</a></li>
+                </ul>
+            </div>
+            <div class="footer-bottom">
+                <div>&copy; 2026 AURA Studio Ecosystem. All concepts calibrated.</div>
+                <div>Haute Horlogerie Assignment Group</div>
+            </div>
+        </footer>
+
+    </div>
+
+    <div class="product-modal" id="info-modal" onclick="closeModal(event)">
+        <div class="modal-body" onclick="event.stopPropagation()">
+            <div class="modal-gallery" id="modal-img"></div>
+            <div class="modal-details">
+                <h2 id="modal-title">Watch Configuration</h2>
+                <span class="modal-price" id="modal-price">$0,000</span>
+                <p id="modal-desc">Bespoke performance chassis designed using calibrated architectural profiles.</p>
+                <div class="modal-action-btn-group">
+                    <button class="btn-luxury btn-glow" onclick="alert('Acquisition pipeline configured. A dedicated profile manager will connect with your terminal inside 24 hours.')">Initiate Acquisition</button>
+                    <button class="close-modal-btn" onclick="closeModal(null)">Close Profile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const COLLECTIONS_ARRAY = [
+            { id: 1, name: "Metropolitan Alpha", price: "$3,200", img: "img2.jpg", desc: "Constructed utilizing an absolute surgical-grade oyster steel monobloc chassis accompanied by custom dark contrast tracking sub-dials." },
+            { id: 2, name: "Voyager Titanium", price: "$4,500", img: "img3.jpg", desc: "Forged under high-vacuum thermal chambers in micro-blasted grade 5 titanium to secure minimal structural weight distributions." },
+            { id: 3, name: "Oyster Obsidian", price: "$2,900", img: "img4.jpg", desc: "A sleek configuration showcasing volcanic crystal structures deeply coupled inside anti-reflective luxury sapphire crystal shields." },
+            { id: 4, name: "Monolith Platinum", price: "$6,100", img: "img5.jpg", desc: "Substantial architectural mass properties designed with solid platinum parameters, mirroring classical high-complication models." },
+            { id: 5, name: "Chronos Light Gold", price: "$3,800", img: "img6.jpg", desc: "Features custom warm-champagne light gold plating matched dynamically alongside an interior open-heart micro mechanical tourbillon cage." },
+            { id: 6, name: "Satin Aerosteel", price: "$2,400", img: "img7.jpg", desc: "An outdoor active configuration optimized with brush-satin horizontal grains to absorb intense workspace visual glare parameters." },
+            { id: 7, name: "Minimalist Ivory", price: "$1,950", img: "img8.jpg", desc: "An absolute study on geometric restraint. Crisp eggshell-white dial plate backed with hand-polished blue steel ticking indicator needles." },
+            { id: 8, name: "Atelier Chronograph", price: "$5,200", img: "img9.jpg", desc: "Engineered specifically for telemetry assessment, providing triple micro-chronograph measurement systems across fine parameters." },
+            { id: 9, name: "Nordic Quartz Pure", price: "$2,100", img: "img10.jpg", desc: "Presents clear translucent structural backings displaying precise temperature-compensated quartz resonators with seamless stability." },
+            { id: 10, name: "Terrace Gold Edition", price: "$7,500", img: "img11.jpg", desc: "The zenith achievement model. Full 18-karat balanced gold housing structure paired carefully with premium alligator leather strap bindings." }
+        ];
+
+        function renderOptions() {
+            const container = document.getElementById('dynamic-options-container');
+            if(!container) return;
+            container.innerHTML = "";
+            COLLECTIONS_ARRAY.forEach(item => {
+                container.innerHTML += `
+                    <div class="option-item">
+                        <div class="option-img" style="background-image: url('${item.img}')"></div>
+                        <h4>${item.name}</h4>
+                        <span>${item.price}</span>
+                    </div>
+                `;
+            });
+
+            document.querySelectorAll('.option-item').forEach((element, index) => {
+                element.addEventListener('click', () => {
+                    openProductInfo(COLLECTIONS_ARRAY[index].id);
+                });
+            });
+
+            initCursorHoverEffects();
+        }
+
+        function openProductInfo(id) {
+            const matchItem = COLLECTIONS_ARRAY.find(p => p.id === id);
+            if(!matchItem) return;
+
+            const modal = document.getElementById('info-modal');
+            document.getElementById('modal-img').style.backgroundImage = `url('${matchItem.img}')`;
+            document.getElementById('modal-title').innerText = matchItem.name;
+            document.getElementById('modal-price').innerText = matchItem.price;
+            document.getElementById('modal-desc').innerText = matchItem.desc;
+
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('modal-active'), 10);
+        }
+
+        function closeModal(e) {
+            const modal = document.getElementById('info-modal');
+            modal.classList.remove('modal-active');
+            setTimeout(() => modal.style.display = 'none', 400);
+        }
+
+        /* --- FINE INTERACTIVE CURSOR LOGIC --- */
+        const dot = document.getElementById('cursor-dot');
+        const ring = document.getElementById('cursor-ring');
+        let cursorX = -100, cursorY = -100;
+        let ringX = -100, ringY = -100;
+
+        window.addEventListener('mousemove', (e) => {
+            cursorX = e.clientX;
+            cursorY = e.clientY;
+            dot.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+        });
+
+        function traceCursorRing() {
+            ringX += (cursorX - ringX) * 0.15; /* Increased speed for precise snappy feel */
+            ringY += (cursorY - ringY) * 0.15;
+            ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+            requestAnimationFrame(traceCursorRing);
+        }
+
+        function initCursorHoverEffects() {
+            const clickables = document.querySelectorAll('a, button, .option-item, .adv-card');
+            clickables.forEach(node => {
+                node.addEventListener('mouseenter', () => document.body.classList.add('cursor-hovering'));
+                node.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hovering'));
+            });
+        }
+
+        /* --- POLISHED INTERTIAL SMOOTH SCROLL --- */
+        const body = document.body;
+        const scrollWrap = document.getElementById("smooth-scroll-wrapper");
+        let offset = 0;
+
+        function updateBodyHeight() {
+            body.style.height = scrollWrap.getBoundingClientRect().height + "px";
+        }
+
+        function smoothScroll() {
+            offset += (window.pageYOffset - offset) * 0.09; /* Elevated responsiveness */
+            scrollWrap.style.transform = `translate3d(0, -${Math.round(offset)}px, 0)`;
+            handleRevealElements();
+            requestAnimationFrame(smoothScroll);
+        }
+
+        function scrollToSection(event, targetSelector) {
+            event.preventDefault();
+            const destinationElement = document.querySelector(targetSelector);
+            if (destinationElement) {
+                const destinationY = destinationElement.getBoundingClientRect().top + window.pageYOffset - 90;
+                window.scrollTo({ top: destinationY, behavior: 'auto' });
+            }
+        }
+
+        /* --- IMAGES / DECOR REVEALS DRIVER --- */
+        function handleRevealElements() {
+            const revealNodes = document.querySelectorAll('.reveal-element');
+            const triggerBottom = window.innerHeight * 0.9;
+
+            revealNodes.forEach(node => {
+                const nodeTop = node.getBoundingClientRect().top;
+                if (nodeTop < triggerBottom) {
+                    node.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            renderOptions();
+            updateBodyHeight();
+            requestAnimationFrame(smoothScroll);
+            requestAnimationFrame(traceCursorRing);
+            setTimeout(handleRevealElements, 200);
+        });
+        
+        window.addEventListener("resize", updateBodyHeight);
+        window.addEventListener("load", updateBodyHeight);
+    </script>
+</body>
+</html>
